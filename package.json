@@ -1,0 +1,21 @@
+{
+  "name": "sandra-atkinson-portfolio",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "dependencies": {
+    "lucide-vue-next": "^0.468.0",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.0",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "tailwindcss": "^4.1.0",
+    "vite": "^6.4.0"
+  }
+}
