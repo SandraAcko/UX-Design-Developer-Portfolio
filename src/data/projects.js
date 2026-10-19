@@ -48,7 +48,7 @@ export const projects = [
     ],
     outcome:
       "High-fidelity interactive Figma prototypes covering the redesigned analytics platform and its key interfaces.",
-    figmaUrl: "",
+    figmaUrl: "https://www.figma.com/proto/ixGoSksior7yiCABVlnBRF/Mi.Team-Mockup?node-id=633-10207&t=qdhawyM4bnwfkj5J-1",
     videoUrl: "",
     hasVideo: false,
   },
@@ -78,6 +78,6 @@ export const projects = [
       "https://www.figma.com/proto/a2iFvnBrAPMnX9NweW91zJ/Enzo-Speakers?node-id=49-2684&t=ZF9zZFZZUrGBBMol-1",
     videoUrl: "https://www.youtube.com/watch?v=BzWfadwYz8o",
     hasVideo: true,
-    award: "First class · 84%",
+    award: "Achieved First class results · 84%",
   },
 ];

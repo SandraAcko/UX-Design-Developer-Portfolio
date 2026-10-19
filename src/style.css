@@ -610,13 +610,13 @@ img {
   container-type: inline-size;
 }
 .scms2 {
-  background: #111c36;
+  background: linear-gradient(115deg, #f3a9c8 0%, #f5bdba 46%, #f3d38b 100%);
 }
 .miteam {
-  background: #111c36;
+  background: linear-gradient(15deg, #f3a9c8 0%, #f5bdba 46%, #f3d38b 100%);
 }
 .enzo {
-  background: #111c36;
+  background: linear-gradient(205deg, #f3a9c8 0%, #f5bdba 46%, #f3d38b 100%);
 }
 .real-project-gallery {
   position: absolute;
@@ -801,10 +801,24 @@ img {
   flex-wrap: wrap;
 }
 .project-info h3 {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
   font-size: 40px;
   line-height: 1.2;
   font-weight: 500;
   margin-bottom: 8px;
+}
+.project-logo {
+  width: 48px;
+  height: 48px;
+  flex: none;
+  object-fit: contain;
+  border-radius: 50%;
+}
+.project-title > span {
+  min-width: 0;
 }
 .project-subtitle {
   font-family: "Fraunces", serif;
@@ -1636,6 +1650,10 @@ img {
   .project-info h3 {
     font-size: 33px;
   }
+  .project-logo {
+    width: 44px;
+    height: 44px;
+  }
   .project-subtitle {
     font-size: 18px;
   }
@@ -1799,7 +1817,11 @@ img {
     font-size: 13px;
   }
   .project-info h3 {
-    font-size: 34px;
+    font-size: 32px;
+  }
+  .project-logo {
+    width: 38px;
+    height: 38px;
   }
   .project-subtitle {
     font-size: 21px;

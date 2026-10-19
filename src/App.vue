@@ -46,6 +46,11 @@ let scrollFrame;
 const email = "sandra-atkinson@outlook.com";
 const splashVideoSrc = `${import.meta.env.BASE_URL}PoftfolioSplashAnimation.mp4`;
 const homeIconSrc = `${import.meta.env.BASE_URL}Icon.svg`;
+const projectLogos = {
+  scms2: `${import.meta.env.BASE_URL}SCLogo.svg`,
+  miteam: `${import.meta.env.BASE_URL}mi.teamLogo.svg`,
+  enzo: `${import.meta.env.BASE_URL}EnzoLogo.svg`,
+};
 
 function updateSunriseProgress() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -381,7 +386,16 @@ onBeforeUnmount(() => {
               project.award
             }}</span>
           </p>
-          <h3>{{ project.name }}</h3>
+          <h3 class="project-title">
+            <img
+              v-if="projectLogos[project.id]"
+              class="project-logo"
+              :src="projectLogos[project.id]"
+              alt=""
+              aria-hidden="true"
+            />
+            <span>{{ project.name }}</span>
+          </h3>
           <p class="project-subtitle">{{ project.category }}</p>
           <p class="project-summary">{{ project.summary }}</p>
           <ul class="tags" aria-label="Project skills">
@@ -484,7 +498,7 @@ onBeforeUnmount(() => {
   <footer class="site-footer page-width">
     <a href="#" class="wordmark" aria-label="Back to top"
       >sandra<span class="wordmark-flower" aria-hidden="true">✳</span></a
-    ><span>Made with care & a little curiosity.</span
+    ><span></span
     ><span>© {{ new Date().getFullYear() }} Sandra Atkinson</span>
   </footer>
 
