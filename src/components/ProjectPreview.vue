@@ -17,12 +17,71 @@ import {
 
 defineProps({ project: { type: Object, required: true } });
 const speakerImage = `${import.meta.env.BASE_URL}speaker.jpg`;
+const projectShots = {
+  scms2: [
+    {
+      src: `${import.meta.env.BASE_URL}SCMS2DeskTop.png`,
+      layout: "scms2-desktop-shot",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}SCMS2Mobile.png`,
+      layout: "scms2-mobile-shot",
+    },
+  ],
+  miteam: [
+    {
+      src: `${import.meta.env.BASE_URL}Mi.Team1.png`,
+      layout: "miteam-overview-shot",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}Mi.Team2.png`,
+      layout: "miteam-users-shot",
+    },
+  ],
+  enzo: [
+    {
+      src: `${import.meta.env.BASE_URL}Enzo1.png`,
+      layout: "enzo-first-shot",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}Enzo2.png`,
+      layout: "enzo-second-shot",
+    },
+  ],
+};
 </script>
 
 <template>
   <div class="project-preview" :class="project.id" aria-hidden="true">
+    <div v-if="project.id === 'scms2'" class="real-project-gallery">
+      <div class="scms2-desktop-frame">
+        <img
+          :src="projectShots.scms2[0].src"
+          alt=""
+          class="scms2-desktop-shot"
+          loading="lazy"
+        />
+      </div>
+      <img
+        :src="projectShots.scms2[1].src"
+        alt=""
+        class="real-project-shot scms2-mobile-shot"
+        loading="lazy"
+      />
+    </div>
+    <div v-else-if="projectShots[project.id]" class="real-project-gallery">
+      <img
+        v-for="shot in projectShots[project.id]"
+        :key="shot.src"
+        :src="shot.src"
+        alt=""
+        class="real-project-shot"
+        :class="shot.layout"
+        loading="lazy"
+      />
+    </div>
     <img
-      v-if="project.image"
+      v-else-if="project.image"
       :src="project.image"
       :alt="project.imageAlt || `${project.name} design preview`"
       class="actual-project-image"
@@ -211,10 +270,5 @@ const speakerImage = `${import.meta.env.BASE_URL}speaker.jpg`;
       <h4>{{ project.name }}</h4>
       <p>{{ project.category }}</p>
     </div>
-    <span
-      v-if="!project.image && ['scms2', 'miteam', 'enzo'].includes(project.id)"
-      class="preview-caption"
-      >Illustrative preview · final design in Figma</span
-    >
   </div>
 </template>

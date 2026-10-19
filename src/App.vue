@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, onBeforeUnmount, ref, watch } from "vue";
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import {
   ArrowDown,
   ArrowDownRight,
@@ -11,6 +11,7 @@ import {
   Figma,
   Linkedin,
   Play,
+  RotateCcw,
   Sparkles,
   X,
 } from "lucide-vue-next";
@@ -20,9 +21,123 @@ import ProjectPreview from "./components/ProjectPreview.vue";
 const activeProject = ref(null);
 const dialog = ref(null);
 const copied = ref(false);
+const splashVideo = ref(null);
+const skipIntroButton = ref(null);
+const mainContent = ref(null);
+const splashVisible = ref(true);
+const splashFading = ref(false);
+const splashLeaving = ref(false);
+const portfolioVisible = ref(false);
+const sunriseProgress = ref(0);
+const heroPhase = ref("idle");
+const heroAnimationStarted = ref(false);
+const heroStatic = ref(false);
+const heroSequenceKey = ref(0);
+const openingLine = Array.from("WHEN THINGS GO");
+const sidewaysLine = Array.from("SIDEWAYS...");
+const finalLines = ["I'M", "READY", "FOR", "THE", "NEXT", "CHALLENGE"].map(
+  (line) => Array.from(line),
+);
 let previousFocus;
 let copyTimer;
+let splashTimer;
+let heroTimer;
+let scrollFrame;
 const email = "sandra-atkinson@outlook.com";
+const splashVideoSrc = `${import.meta.env.BASE_URL}PoftfolioSplashAnimation.mp4`;
+const homeIconSrc = `${import.meta.env.BASE_URL}Icon.svg`;
+
+function updateSunriseProgress() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    sunriseProgress.value = 0;
+    return;
+  }
+
+  if (scrollFrame) return;
+  scrollFrame = requestAnimationFrame(() => {
+    scrollFrame = 0;
+    const projectsSection = document.getElementById("work");
+    if (!projectsSection) return;
+
+    const projectsTop = projectsSection.getBoundingClientRect().top + window.scrollY;
+    const transitionEnd = Math.max(1, projectsTop - window.innerHeight * 0.25);
+    sunriseProgress.value = Math.min(1, Math.max(0, window.scrollY / transitionEnd));
+  });
+}
+
+function startHeroSequence() {
+  clearTimeout(heroTimer);
+  heroPhase.value = "idle";
+  heroAnimationStarted.value = false;
+  heroStatic.value = false;
+  heroSequenceKey.value += 1;
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    heroStatic.value = true;
+    heroPhase.value = "message";
+    return;
+  }
+
+  heroAnimationStarted.value = true;
+  heroPhase.value = "typing";
+  heroTimer = setTimeout(() => {
+    heroPhase.value = "falling";
+    heroTimer = setTimeout(() => {
+      heroPhase.value = "rising";
+      heroTimer = setTimeout(() => {
+        heroPhase.value = "message";
+      }, 3450);
+    }, 1050);
+  }, 2050);
+}
+
+function finishSplash() {
+  if (!splashVisible.value || splashFading.value) return;
+
+  const shouldFocusMain = document.activeElement === skipIntroButton.value;
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+  splashFading.value = true;
+  splashVideo.value?.pause();
+
+  splashTimer = setTimeout(() => {
+    portfolioVisible.value = true;
+    startHeroSequence();
+
+    if (reduceMotion) {
+      splashVisible.value = false;
+      if (shouldFocusMain) {
+        nextTick(() => mainContent.value?.focus({ preventScroll: true }));
+      }
+      return;
+    }
+
+    splashLeaving.value = true;
+    splashTimer = setTimeout(() => {
+      splashVisible.value = false;
+      if (shouldFocusMain) {
+        nextTick(() => mainContent.value?.focus({ preventScroll: true }));
+      }
+    }, 850);
+  }, reduceMotion ? 0 : 500);
+}
+
+onMounted(() => {
+  window.addEventListener("scroll", updateSunriseProgress, { passive: true });
+  window.addEventListener("resize", updateSunriseProgress);
+  updateSunriseProgress();
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    splashVisible.value = false;
+    portfolioVisible.value = true;
+    startHeroSequence();
+    return;
+  }
+
+  if (splashVideo.value) splashVideo.value.playbackRate = 1.12;
+  splashVideo.value?.play().catch(finishSplash);
+});
 
 async function openProject(project) {
   previousFocus = document.activeElement;
@@ -70,52 +185,158 @@ async function copyEmail() {
 
 onBeforeUnmount(() => {
   clearTimeout(copyTimer);
+  clearTimeout(splashTimer);
+  clearTimeout(heroTimer);
+  window.removeEventListener("scroll", updateSunriseProgress);
+  window.removeEventListener("resize", updateSunriseProgress);
+  if (scrollFrame) cancelAnimationFrame(scrollFrame);
   document.body.style.overflow = "";
 });
 </script>
 
 <template>
-  <a class="skip-link" href="#main">Skip to content</a>
-  <header class="site-header page-width">
-    <a href="#" class="wordmark" aria-label="Sandra Atkinson, home"
-      >sandra<span class="wordmark-flower" aria-hidden="true">✳</span></a
+  <section
+    v-if="splashVisible"
+    class="splash-screen"
+    :class="{ 'splash-screen--leaving': splashLeaving }"
+    aria-label="Portfolio introduction"
+  >
+    <div
+      class="splash-content"
+      :class="{ 'splash-content--fading': splashFading }"
     >
+      <video
+        ref="splashVideo"
+        class="splash-video"
+        :src="splashVideoSrc"
+        autoplay
+        muted
+        playsinline
+        preload="auto"
+        aria-label="Animated portfolio introduction"
+        @ended="finishSplash"
+        @error="finishSplash"
+      ></video>
+      <button
+        ref="skipIntroButton"
+        class="splash-skip"
+        type="button"
+        @click="finishSplash"
+      >
+        Skip intro <ArrowRight :size="15" aria-hidden="true" />
+      </button>
+    </div>
+  </section>
+
+  <div
+    class="portfolio-content"
+    :class="{ 'portfolio-content--visible': portfolioVisible }"
+    :style="{ '--sunrise-progress': `${sunriseProgress * 100}%` }"
+    :inert="!portfolioVisible"
+    :aria-hidden="!portfolioVisible"
+  >
+    <div class="sunrise-backdrop" aria-hidden="true"></div>
+    <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header page-width">
+    <div class="flex flex-col">
+      <a href="#" class="wordmark" aria-label="Sandra Atkinson, home">
+        <img class="wordmark-icon" :src="homeIconSrc" alt="" />
+        <span>Sandra Atkinson</span>
+      </a>
+      <span class="eyebrow coral">UX DESIGN DEGREE APPRENTICE & WEB DEVELOPER</span>
+    </div>
     <nav aria-label="Main navigation">
-      <a href="#work">Work</a><a href="#about">About</a
+      <a href="#work">Projects</a><a href="#about">About Me</a
       ><a href="#contact" class="nav-contact"
         >Let's talk <ArrowDownRight :size="15"
       /></a>
     </nav>
   </header>
 
-  <main id="main">
-    <section class="hero page-width" aria-labelledby="intro-title">
-      <div class="hero-topline">
-        <span class="eyebrow">UX DESIGN & WEB DEVELOPMENT</span
-        ><span class="availability"><i></i> Open to junior UX roles</span>
+  <main id="main" ref="mainContent" tabindex="-1">
+    <section class="hero page-width" aria-labelledby="impact-title">
+      <div
+        :key="heroSequenceKey"
+        class="impact-stage"
+        :class="{
+          'impact-stage--active': heroAnimationStarted,
+          'impact-stage--dropped': ['falling', 'rising', 'message'].includes(heroPhase),
+          'impact-stage--answer': ['rising', 'message'].includes(heroPhase),
+          'impact-stage--message': heroPhase === 'message',
+          'impact-stage--static': heroStatic,
+        }"
+      >
+        <h1
+          id="impact-title"
+          class="impact-title"
+          aria-label="When things go sideways... It's time to find a new way up. I'm ready for the next challenge."
+        >
+          <span class="impact-original" aria-hidden="true">
+            <span class="impact-original-flip">
+              <span class="impact-line impact-line--opening">
+                <span
+                  v-for="(character, index) in openingLine"
+                  :key="`opening-${index}`"
+                  class="impact-letter"
+                  :style="{ '--letter-delay': `${index * 58}ms` }"
+                  >{{ character === " " ? "\u00a0" : character }}</span
+                >
+              </span>
+              <span class="impact-line impact-line--sideways">
+                <span
+                  v-for="(character, index) in sidewaysLine"
+                  :key="`sideways-${index}`"
+                  class="impact-letter"
+                  :style="{
+                    '--letter-delay': `${(openingLine.length + index + 2) * 58}ms`,
+                  }"
+                  >{{ character }}</span
+                >
+              </span>
+            </span>
+          </span>
+          <span class="impact-answer" aria-hidden="true">
+            <span>IT'S TIME TO FIND A</span>
+            <span class="impact-answer-emphasis">NEW WAY UP!</span>
+          </span>
+          <span class="impact-final" aria-hidden="true">
+            <span
+              v-for="(line, lineIndex) in finalLines"
+              :key="`final-line-${lineIndex}`"
+              class="impact-final-line"
+            >
+              <span
+                v-for="(character, characterIndex) in line"
+                :key="`final-letter-${lineIndex}-${characterIndex}`"
+                class="impact-final-letter"
+                :class="{ 'impact-answer-emphasis': lineIndex > 1 }"
+                :style="{
+                  '--final-letter-delay': `${(lineIndex * 3 + characterIndex) * 52}ms`,
+                }"
+                >{{ character }}</span
+              >
+            </span>
+          </span>
+        </h1>
+        <button
+          v-if="heroPhase === 'message' || heroStatic"
+          class="impact-replay"
+          type="button"
+          aria-label="Replay hero animation"
+          title="Replay animation"
+          @click="startHeroSequence"
+        >
+          <RotateCcw :size="15" aria-hidden="true" /> Replay
+        </button>
       </div>
-      <h1 id="intro-title">
-        Sandra Atkinson<span class="coral">.</span><br />A
-        <span class="hero-serif">human</span> approach<span class="coral"
-          >.</span
-        ><Sparkles class="hero-spark" :stroke-width="1.2" aria-hidden="true" />
-      </h1>
       <div class="hero-bottom">
-        <p>
-          I'm a Digital UX degree apprentice and web developer,<br
-            class="desktop-break"
-          />
-          bringing user-focused ideas from Figma to the web.
-        </p>
+        <div class="hero-intro-copy">
+          <strong>Bridging the gap between form and function</strong>
+          <p>An end-to-end creator who builds in fast-paced Agile environments, managing every stage of the lifecycle: gathering requirements, iterating on UX, writing the code, deploying, and maintaining.</p>
+        </div>
         <a href="#work" class="work-link"
           >Explore my work <span><ArrowDown :size="19" /></span
         ></a>
-      </div>
-      <div class="hero-note" aria-hidden="true">
-        A little curiosity goes a long way.<ArrowDownRight
-          :size="23"
-          :stroke-width="1.2"
-        />
       </div>
     </section>
 
@@ -349,4 +570,5 @@ onBeforeUnmount(() => {
         /></a></div
     ></template>
   </dialog>
+  </div>
 </template>
