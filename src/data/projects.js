@@ -1,6 +1,9 @@
+import { scms2DeepDive } from "./scms2DeepDive";
+
 export const projects = [
   {
     id: "scms2",
+    deepDive: scms2DeepDive,
     name: "SCMS2",
     category: "Delivery tracking, made clearer.",
     client: "Network Ltd",

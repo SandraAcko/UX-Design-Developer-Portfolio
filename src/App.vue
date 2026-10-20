@@ -17,6 +17,7 @@ import {
 } from "lucide-vue-next";
 import { projects } from "./data/projects";
 import ProjectPreview from "./components/ProjectPreview.vue";
+import CaseStudy from "./components/CaseStudy.vue";
 
 const activeProject = ref(null);
 const dialog = ref(null);
@@ -505,6 +506,7 @@ onBeforeUnmount(() => {
   <dialog
     ref="dialog"
     class="project-dialog"
+    :class="{ 'project-dialog--deep': activeProject?.deepDive }"
     aria-labelledby="dialog-title"
     @cancel.prevent="closeProject"
     @keydown.esc.prevent.stop="closeProject"
@@ -532,26 +534,29 @@ onBeforeUnmount(() => {
         <h2 id="dialog-title">{{ activeProject.name }}</h2>
         <p class="dialog-subtitle">{{ activeProject.category }}</p>
         <ProjectPreview :project="activeProject" />
-        <div class="case-section">
-          <h3>The project</h3>
-          <p>{{ activeProject.context }}</p>
-        </div>
-        <div class="case-section">
-          <h3>The challenge</h3>
-          <p>{{ activeProject.challenge }}</p>
-        </div>
-        <div class="case-section">
-          <h3>My approach</h3>
-          <ul>
-            <li v-for="step in activeProject.approach" :key="step">
-              {{ step }}
-            </li>
-          </ul>
-        </div>
-        <div class="case-section">
-          <h3>The deliverable</h3>
-          <p>{{ activeProject.outcome }}</p>
-        </div>
+        <CaseStudy v-if="activeProject.deepDive" :study="activeProject.deepDive" />
+        <template v-else>
+          <div class="case-section">
+            <h3>The project</h3>
+            <p>{{ activeProject.context }}</p>
+          </div>
+          <div class="case-section">
+            <h3>The challenge</h3>
+            <p>{{ activeProject.challenge }}</p>
+          </div>
+          <div class="case-section">
+            <h3>My approach</h3>
+            <ul>
+              <li v-for="step in activeProject.approach" :key="step">
+                {{ step }}
+              </li>
+            </ul>
+          </div>
+          <div class="case-section">
+            <h3>The deliverable</h3>
+            <p>{{ activeProject.outcome }}</p>
+          </div>
+        </template>
         <div class="project-resources">
           <a
             v-if="activeProject.figmaUrl"
