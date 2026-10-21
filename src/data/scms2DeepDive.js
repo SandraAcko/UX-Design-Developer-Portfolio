@@ -4,7 +4,7 @@ const img = (caption, opts = {}) => ({
   type: "image",
   caption,
   alt: opts.alt || caption,
-  src: opts.file ? pub(opts.file) : "",
+  src: opts.file ? pub(`scms2Images/${opts.file}`) : "",
   ratio: opts.ratio || "wide", // placeholder shape: wide | square | tall | banner
   size: opts.size || "full", // full | medium
 });
@@ -13,7 +13,7 @@ const img = (caption, opts = {}) => ({
 const gallery = (layout, ratio, ...images) => ({ type: "gallery", layout, ratio, images });
 const compare = (before, after, caption) => ({
   type: "compare",
-  before: { ...before, src: pub(before.file) },
+  before: { ...before, src: pub(`scms2Images/${before.file}`) },
   after: { ...after, src: pub(after.file) },
   caption,
 });
@@ -206,13 +206,13 @@ export const scms2DeepDive = {
         img("Additional site information, including allowed vehicles and automatic delays", { file: "34-TCPV2AdditionalSiteInfo.png", size: "medium" }),
         p("The individual call-off status was a more challenging design problem."),
         p("The initial request was to use the dark background behind each plot number as a colour-coded status indicator, with a separate key explaining the colours. This came in as a ticket for the development team."),
-        gallery("pair", "16 / 9",
-          img("The GitLab ticket requesting status colours and a key", { file: "35-GitLabTicketToAddStatusColourAndKey.jpg" }),
-          img("What the ticket would have looked like", { file: "36-ExampleOfWhatFollowingTicketWouldLookLike.png" }),
-        ),
+        img("The GitLab ticket requesting status colours and a key", { file: "35-GitLabTicketToAddStatusColourAndKey.jpg" }),
         p("I felt this would create several issues. Changing the background could reduce the contrast of the white plot-number text, weaken the plot number's visual prominence and introduce more colours into a layout that already used colour to distinguish product types and delivery status."),
         p("The plot number also acted as a visual anchor, helping users identify and scan individual call-offs. Changing its appearance risked undermining that consistency."),
-        img("Plot numbers remain a strong visual anchor, even when blurred", { file: "37-PlotsAreStrongVisualAnchorEvenWhenBlurred.png", size: "medium" }),
+        gallery("pair", "4 / 3",
+          img("What the ticket would have looked like", { file: "36-ExampleOfWhatFollowingTicketWouldLookLike.png" }),
+          img("Plot numbers remain a strong visual anchor, even when blurred", { file: "37-PlotsAreStrongVisualAnchorEvenWhenBlurred.png" }),
+        ),
         p("Instead, I proposed a small progress bar for each call-off, with the status communicated directly within the component. This avoided the need for a separate key and kept the individual status visually distinct from the product and delivery indicators. The alternative was approved."),
         img("Track Call-offs V2 with the call-off status solution", { file: "38-TCPV2FullWithCalloffStatusSolution.jpg", size: "medium" }),
 
@@ -235,11 +235,11 @@ export const scms2DeepDive = {
         img("The Track Call-offs page, developed in code", { file: "41-FullPageDevelopedInCode.png", size: "medium" }),
         p("This has allowed me to take the ideas and interactions explored during the design process and begin implementing them within the actual product. It has also given me the opportunity to work across both UX/UI design and development, considering how the intended experience translates into a functioning interface."),
         p("The status detail dialogs I designed are now working components, including proof of delivery and GPS tracking, alongside the progress bars on each call-off."),
-        gallery("pair", "16 / 9",
+        gallery("trio", "16 / 10",
           img("Proof of delivery dialog", { file: "42-TCPV2ProofOfDeliveryDialog.png" }),
           img("GPS tracking", { file: "43-TCPV2GPSTracking.png" }),
+          img("Call-off status progress bars in code", { file: "44-TCPV2CalloffStatusProgressBars.png" }),
         ),
-        img("Call-off status progress bars in code", { file: "44-TCPV2CalloffStatusProgressBars.png", size: "medium" }),
         p("The project has not launched yet, so I cannot claim measured improvements in usability or task completion at this stage. However, recent client meetings have been very positive, and the client is keen to release the portal to an initial group of site managers for testing. There is also interest in using the system internally."),
         p("The next important step will be to see how people use the working application in practice, identify any points of friction and refine the experience based on their feedback."),
       ],

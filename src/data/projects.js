@@ -1,16 +1,17 @@
 import { scms2DeepDive } from "./scms2DeepDive";
+import { miteamDeepDive } from "./miteamDeepDive";
 
 export const projects = [
   {
     id: "scms2",
     deepDive: scms2DeepDive,
     name: "SCMS2",
-    category: "Delivery tracking, made clearer.",
+    category: "From call-off portal to working product.",
     client: "Network Ltd",
     type: "Commercial project",
     summary:
-      "Bringing clarity to a busy delivery tracking system. A refreshed interface that makes room for more information, without the overwhelm.",
-    tags: ["UX/UI design", "Enterprise software", "Prototyping"],
+      "A customer call-off portal and a redesigned Track Call-offs page, taking complex delivery data from Figma prototypes through to a working Vue frontend.",
+    tags: ["UX/UI design", "Prototyping", "Vue.js & Tailwind"],
     context:
       "A redesign of an existing internal application used to track deliveries. The project focused on modernising the interface while presenting more information clearly without overwhelming users.",
     challenge:
@@ -30,13 +31,14 @@ export const projects = [
   },
   {
     id: "miteam",
+    deepDive: miteamDeepDive,
     name: "Mi.team",
     category: "Complex data. A simpler experience.",
     client: "Network Ltd",
     type: "Commercial project",
     summary:
-      "Rethinking an analytics platform from the ground up, making activity and device data easier to explore, understand and act on.",
-    tags: ["UX research", "Dashboard design", "Data visualisation"],
+      "Redesigning an analytics platform from competitor research to a working product, making activity and device data easier to explore, understand and act on.",
+    tags: ["UX/UI redesign", "Data visualisation", "Vue.js"],
     context:
       "A complete redesign of an existing analytics platform, transforming a cluttered, difficult-to-navigate interface into a modern, intuitive application. The focus was on making complex activity and device data easier to understand while promoting transparency, personalisation and usability.",
     challenge:

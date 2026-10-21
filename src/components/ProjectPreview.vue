@@ -30,11 +30,11 @@ const projectShots = {
   ],
   miteam: [
     {
-      src: `${import.meta.env.BASE_URL}Mi.Team1.png`,
+      src: `${import.meta.env.BASE_URL}mi.teamImages/1-NewRedesignForComparison.jpg`,
       layout: "miteam-overview-shot",
     },
     {
-      src: `${import.meta.env.BASE_URL}Mi.Team2.png`,
+      src: `${import.meta.env.BASE_URL}mi.teamImages/15-NewDevicesPage.png`,
       layout: "miteam-users-shot",
     },
   ],
